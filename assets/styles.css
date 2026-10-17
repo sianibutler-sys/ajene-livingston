@@ -570,3 +570,13 @@ input[type="file"]::file-selector-button:hover { background: var(--ink); color: 
 
 /* The hidden attribute always wins over component display rules (fixes the Work filters) */
 [hidden] { display: none !important; }
+
+/* Watch: portrait video beside its context */
+.watch { grid-template-columns: minmax(0, 360px) minmax(0, 1fr); align-items: center; }
+.watch__video { margin: 0; }
+.watch__video video { display: block; width: 100%; height: auto; aspect-ratio: 320 / 568; background: var(--mahogany); border-radius: var(--radius); }
+.watch__more { font-family: var(--font-text); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--clay); margin: 1.5rem 0 0.25rem; }
+.link-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+.link-list a { font-weight: 600; }
+.link-list .muted { display: block; font-size: 0.9rem; }
+@media (max-width: 860px) { .watch { grid-template-columns: minmax(0, 1fr); } .watch__video { max-width: 340px; } }

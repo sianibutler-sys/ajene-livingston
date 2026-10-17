@@ -71,15 +71,30 @@
     </div>
   </section>
 
-  <section class="section" style="padding-top: 0;" aria-labelledby="reel-title">
-    <div class="wrap">
-      <h2 id="reel-title" class="visually-hidden">Speaker reel</h2>
-      <div class="media media--video" role="group" aria-label="Video placeholder: speaker reel">
-        <button class="play" type="button" data-video-placeholder aria-label="Play speaker reel" aria-describedby="reel-status"></button>
-        <span class="media__tag">Video</span>
-        <span class="media__desc">Speaker reel, 60 to 90 seconds: a keynote moment, emceeing a gala, a workshop, and a stage performance. Include captions and a transcript.</span>
-        <span class="media__size">16:9, 1920 × 1080, MP4</span>
-        <p class="media__status" id="reel-status" role="status" aria-live="polite"></p>
+  <section class="section" id="watch" style="padding-top: 0;" aria-labelledby="reel-title">
+    <div class="wrap two-col watch">
+      <figure class="watch__video">
+        <video controls playsinline preload="metadata" width="320" height="568" poster="assets/video/america250-panel-poster.jpg" aria-describedby="watch-context">
+          <source src="assets/video/america250-panel.mp4" type="video/mp4">
+          <track kind="captions" srclang="en" label="English" src="assets/video/america250-panel.vtt" default>
+          <p>Your browser can't play this video. <a href="assets/video/america250-panel.mp4">Download the clip</a>.</p>
+        </video>
+      </figure>
+      <div class="stack">
+        <p class="eyebrow">Watch</p>
+        <h2 id="reel-title">Reading the Declaration, 250 years later</h2>
+        <p id="watch-context">A panel at the Uptown Knauer Performing Arts Center in West Chester, part of Chester County's America250 work. Everyone on stage had taken part in the county's public reading of the Declaration of Independence. I spoke about what the Declaration, the Constitution, and our government mean today, from where I stand as a Black man in America.</p>
+        <details class="disclosure">
+          <summary>Read the transcript</summary>
+          <div class="disclosure__body">
+            <p>It wasn't like the Pledge of Allegiance for us. So we weren't given the training or the opportunity to learn how to dissect or digest or to own the Declaration. So for me, I didn't really encounter it until my adult years. And even then... I think your first question was, how does it feel? How did it feel? Even then, the experience was layered. Even when we read it, there was anger, there was frustration, there was despondency. It was a layered experience because it became a little overwhelming.</p>
+          </div>
+        </details>
+        <h3 class="watch__more">More from the reading</h3>
+        <ul class="link-list" role="list">
+          <li><a href="https://www.youtube.com/watch?v=2lkdxr4_MHA">Chester County Reads the Declaration of Independence</a> <span class="muted">Chester County Community Foundation, on YouTube</span></li>
+          <li><a href="https://www.youtube.com/watch?v=QWJFiUk59Bg">Dare to Declare, Masterworks 3: Made in America</a> <span class="muted">Brandywine Valley Symphony, on YouTube</span></li>
+        </ul>
       </div>
     </div>
   </section>
