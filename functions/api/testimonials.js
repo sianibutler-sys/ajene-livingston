@@ -1,9 +1,10 @@
 // Cloudflare Pages Function: GET /api/testimonials?page=home
 // Returns testimonials that are Published, have permission, and allow Website use.
 // If any are tagged for this page under "Featured on", only those are returned.
+// With strict=1 (service pages), only tagged testimonials are returned, even if that is none.
 // Needs AIRTABLE_TOKEN with data.records:read, plus AIRTABLE_BASE and AIRTABLE_TABLE.
 
-const PAGES = ["Home", "Work", "Services", "Speaking"];
+const PAGES = ["Home", "Impact", "Work", "Services", "Speaking", "Partnerships", "Leadership", "Community"];
 
 function attribution(r) {
   const f = r.fields;
@@ -23,7 +24,9 @@ function attribution(r) {
 }
 
 export async function onRequestGet({ request, env }) {
-  const pageParam = new URL(request.url).searchParams.get("page") || "";
+  const params = new URL(request.url).searchParams;
+  const pageParam = params.get("page") || "";
+  const strict = params.get("strict") === "1";
   const page = PAGES.find((p) => p.toLowerCase() === pageParam.toLowerCase());
 
   const formula = "AND({Status}='Published',{Permission granted},FIND('Website',ARRAYJOIN({Approved uses})))";
@@ -34,7 +37,7 @@ export async function onRequestGet({ request, env }) {
   let records = (await res.json()).records || [];
   if (page) {
     const tagged = records.filter((r) => (r.fields["Featured on"] || []).includes(page));
-    if (tagged.length) records = tagged;
+    if (tagged.length || strict) records = tagged;
   }
 
   const testimonials = records.map((r) => {

@@ -96,11 +96,14 @@
   if (!mount) return;
   var page = mount.getAttribute("data-testimonials");
 
-  fetch("/api/testimonials?page=" + encodeURIComponent(page))
+  var strict = mount.hasAttribute("data-strict");
+  var section = mount.closest("[data-testimonials-section]");
+  fetch("/api/testimonials?page=" + encodeURIComponent(page) + (strict ? "&strict=1" : ""))
     .then(function (res) { if (!res.ok) throw new Error(); return res.json(); })
     .then(function (data) {
       var items = (data && data.testimonials) || [];
-      if (!items.length) return; /* keep the placeholder */
+      if (!items.length) return; /* keep the placeholder, or keep a strict section hidden */
+      if (section) section.hidden = false;
       render(items);
     })
     .catch(function () { /* no API in preview: keep the placeholder */ });

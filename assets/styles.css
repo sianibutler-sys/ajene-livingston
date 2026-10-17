@@ -107,7 +107,7 @@ a:hover { color: var(--clay); }
 .brand:hover { color: var(--ink); }
 .nav-list { display: flex; align-items: center; gap: 1.75rem; list-style: none; }
 .nav-list a { text-decoration: none; font-weight: 500; font-size: 0.975rem; padding-block: 0.6rem; display: inline-block; }
-.nav-list a[aria-current="page"] { text-decoration: underline; text-decoration-color: var(--lagoon); text-decoration-thickness: 2px; text-underline-offset: 8px; }
+.nav-list a[aria-current="page"], .nav-list a[aria-current="true"] { text-decoration: underline; text-decoration-color: var(--lagoon); text-decoration-thickness: 2px; text-underline-offset: 8px; }
 .nav-toggle {
   display: none; align-items: center; gap: 0.5rem; min-height: 44px; padding: 0 0.9rem;
   background: transparent; border: 1px solid var(--line); color: var(--ink); font: 600 0.95rem var(--font-text); border-radius: var(--radius); cursor: pointer;
@@ -580,3 +580,20 @@ input[type="file"]::file-selector-button:hover { background: var(--ink); color: 
 .link-list a { font-weight: 600; }
 .link-list .muted { display: block; font-size: 0.9rem; }
 @media (max-width: 860px) { .watch { grid-template-columns: minmax(0, 1fr); } .watch__video { max-width: 340px; } }
+
+/* Service hub cards and service pages */
+.svc-card { position: relative; padding-bottom: 0.5rem; }
+.svc-card h2 { font-size: var(--step-3); }
+.svc-card h2 a { text-decoration: none; }
+.svc-card h2 a::after { content: ""; position: absolute; inset: 0; }
+.svc-card:hover h2 a, .svc-card h2 a:focus-visible { text-decoration: underline; text-decoration-color: var(--lagoon); }
+.svc-card:focus-within { outline: 3px solid var(--lagoon); outline-offset: 6px; border-radius: var(--radius); }
+.svc-card h2 a:focus-visible { outline: none; }
+.svc-card__num { font-family: var(--font-display); font-size: var(--step-2); color: var(--clay); line-height: 1; }
+.svc-card__go { margin-top: auto; font-weight: 600; color: var(--clay); }
+.svc-card__go::after { content: " \2192"; }
+.crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 0.25rem 0.6rem; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--clay); }
+.crumbs li + li::before { content: "/"; margin-right: 0.6rem; color: var(--muted); }
+.crumbs a { color: inherit; }
+.case__title { font-family: var(--font-display); font-weight: 400; font-size: var(--step-4); line-height: 1.1; }
+.related-more { margin-top: var(--space-4); max-width: 70ch; }
