@@ -246,6 +246,14 @@
     if (box) box.checked = true;
   } catch (e) { /* no query string available */ }
 
+  /* Event callouts switch from "register" to past tense once registration closes */
+  document.querySelectorAll("[data-event-until]").forEach(function (box) {
+    var until = Date.parse(box.getAttribute("data-event-until"));
+    if (isNaN(until) || Date.now() < until) return;
+    box.querySelectorAll('[data-event="upcoming"]').forEach(function (el) { el.hidden = true; });
+    box.querySelectorAll('[data-event="past"]').forEach(function (el) { el.hidden = false; });
+  });
+
   var year = document.getElementById("year");
   if (year) year.textContent = String(new Date().getFullYear());
 })();

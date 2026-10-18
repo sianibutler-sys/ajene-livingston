@@ -597,3 +597,12 @@ input[type="file"]::file-selector-button:hover { background: var(--ink); color: 
 .crumbs a { color: inherit; }
 .case__title { font-family: var(--font-display); font-weight: 400; font-size: var(--step-4); line-height: 1.1; }
 .related-more { margin-top: var(--space-4); max-width: 70ch; }
+
+/* LeadLab block on Speaking */
+.leadlab { align-items: center; }
+.leadlab__photos { margin: 0; }
+.photo-pair { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.photo-pair li:nth-child(2) { margin-top: 2.5rem; }
+.photo-credit { margin-top: 0.75rem; font-size: 0.85rem; }
+.event-callout { align-items: center; }
+.event-callout__when { color: var(--on-dark-muted, #E9DCCB); font-size: 0.95rem; }
