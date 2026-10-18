@@ -599,10 +599,21 @@ input[type="file"]::file-selector-button:hover { background: var(--ink); color: 
 .related-more { margin-top: var(--space-4); max-width: 70ch; }
 
 /* LeadLab block on Speaking */
-.leadlab { align-items: center; }
+.leadlab-section { background: var(--paper); }
+.leadlab__head { max-width: 62ch; }
+.leadlab__head .lede { margin-top: 1rem; }
+.leadlab__pillars { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-4); }
+.leadlab__pillars li { padding-top: 1.25rem; border-top: 2px solid var(--clay); }
+.leadlab__pillars h3 { font-family: var(--font-display); font-weight: 400; font-size: var(--step-2); margin-bottom: 0.5rem; }
+.leadlab__story { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; margin-top: var(--space-5); }
+.leadlab__subhead { font-family: var(--font-display); font-weight: 400; font-size: var(--step-3); }
+.leadlab__quote { margin: 0.5rem 0; padding-left: 1.25rem; border-left: 3px solid var(--lagoon); }
+.leadlab__quote blockquote { margin: 0; font-family: var(--font-display); font-size: var(--step-2); line-height: 1.3; }
+.leadlab__quote figcaption { margin-top: 0.75rem; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.04em; color: var(--clay); }
 .leadlab__photos { margin: 0; }
 .photo-pair { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .photo-pair li:nth-child(2) { margin-top: 2.5rem; }
 .photo-credit { margin-top: 0.75rem; font-size: 0.85rem; }
 .event-callout { align-items: center; }
-.event-callout__when { color: var(--on-dark-muted, #E9DCCB); font-size: 0.95rem; }
+.event-callout__when { color: var(--on-dark-muted); font-size: 0.95rem; }
+@media (max-width: 860px) { .leadlab__pillars, .leadlab__story { grid-template-columns: minmax(0, 1fr); } }
