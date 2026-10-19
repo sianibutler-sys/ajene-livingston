@@ -22,7 +22,7 @@ async function sendThanks(env, to, subject, paragraphs) {
   if (!env.RESEND_API_KEY || !to) return;
   const sig = ["Ajené Livingston", "ajenelivingston.com"];
   const text = paragraphs.join("\n\n") + "\n\n" + sig.join("\n");
-  const html = `<div style="font-family:Georgia,serif;font-size:16px;line-height:1.6;color:#3B2418;max-width:560px">${paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}<p>${sig.map(esc).join("<br>")}</p></div>`;
+  const html = `<div style="font-family:Georgia,serif;font-size:16px;line-height:1.6;color:#3B2418;max-width:560px">${paragraphs.map((p) => `<p>${esc(p).replace(/\n/g, "<br>")}</p>`).join("")}<p>${sig.map(esc).join("<br>")}</p></div>`;
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
@@ -110,13 +110,36 @@ export async function onRequestPost({ request, env, waitUntil }) {
   await upload(env, recordId, "Headshot", form.get("headshot"));
   await upload(env, recordId, "Organization logo", form.get("logo"));
 
+  const strip = (parts) => (parts.length > 1 && /^(dr|mr|mrs|ms|mx|rev|prof)\.?$/i.test(parts[0]) ? parts.slice(1) : parts);
+  const parts = strip(name.split(/\s+/));
+  const short = parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0]}.` : name;
+  const join = (...xs) => xs.filter(Boolean).join(", ");
+  const title = fields["Title or role"], org = fields["Organization"];
+  const line = {
+    "Full name and organization": join(name, org),
+    "First name, last initial, and organization": join(short, org),
+    "Title and organization only": join(title, org),
+    "Anonymous": relationship || "Client",
+  }[display] || join(name, title, org);
+  const hasPhoto = form.get("headshot") && form.get("headshot").size;
+  const hasLogo = form.get("logo") && form.get("logo").size;
+  const media = (sent, shown) => (sent ? (shown ? "sent, and shown with your words" : "sent, but kept private") : "none sent");
+
   const thanks = sendThanks(env, email, "Thank you for sharing your words", [
     `Hi ${firstName(name)},`,
-    "Thank you for taking the time to share your experience. It means a great deal.",
-    "Here's what happens next. Your testimonial comes straight to me, and nothing is published automatically. It will appear only in the places you approved, with your name shown the way you chose. If I'd like to shorten anything beyond a light trim, I'll check with you first.",
-    "To change how your words are used at any point, reply to this email.",
+    "Thank you for taking the time to share your experience. It means a great deal. Here's a copy of what you sent, for your records.",
+    `"${testimonial}"\n${line}`,
+    [
+      `Your name: ${display}`,
+      `Can be used on: ${uses.join(", ")}`,
+      `Edits: ${fields["OK to edit for length"] ? "OK to shorten for length. Anything more comes back to you first." : "used exactly as written"}`,
+      `Headshot: ${media(hasPhoto, fields["Show my photo"])}`,
+      `Logo: ${media(hasLogo, fields["Show organization logo"])}`,
+    ].join("\n"),
+    "Nothing is published automatically. I read every testimonial myself, and your words appear only where you said yes, with your name shown the way you chose.",
+    "Need to change something? Reply to this email with the change you'd like: new wording, a different name display, a new photo, or fewer places to use it. You can also withdraw permission at any time.",
   ]);
   if (waitUntil) waitUntil(thanks); else await thanks;
 
-  return json({ ok: true });
+  return json({ ok: true, emailed: Boolean(env.RESEND_API_KEY) });
 }

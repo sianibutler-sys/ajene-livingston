@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=Instrument+Serif:ital@0;1&amp;display=swap">
-<link rel="stylesheet" href="assets/styles.css?v=20261019c">
+<link rel="stylesheet" href="assets/styles.css?v=20261019d">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
@@ -54,7 +54,8 @@
   <section class="section" style="padding-top: 0;" aria-label="Testimonial form">
     <div class="wrap form-grid">
       <form id="testimonial-form" novalidate enctype="multipart/form-data" aria-describedby="t-intro">
-        <p id="t-intro" class="muted">Takes about five minutes. Fields marked required are needed to use your words. Everything else is optional.</p>
+        <p id="t-intro" class="muted">Takes about five minutes. Fields marked required are needed to use your words. Everything else is optional. Your answers save in this browser as you type, so you can come back and finish later.</p>
+        <p class="draft-note" id="t-draft-note" hidden>Welcome back. Your saved draft is filled in below. Headshots, logos, and your signature aren't saved, so add those again. <button type="button" class="text-link">Start over</button></p>
 
         <!-- Spam trap: hidden from people, filled in by bots -->
         <div class="visually-hidden" aria-hidden="true">
@@ -152,6 +153,7 @@
               <option>Title and organization only</option>
               <option>Anonymous</option>
             </select>
+            <p class="name-preview" aria-live="polite"><span class="hint">Your words will be signed:</span> <span id="t-display-preview"></span></p>
           </div>
           <div class="field-row">
             <div class="field">
@@ -255,7 +257,7 @@
     </div>
   </div>
 </footer>
-<script src="assets/site.js?v=20261019c" defer></script>
-<script src="assets/testimonials.js?v=20261019c" defer></script>
+<script src="assets/site.js?v=20261019d" defer></script>
+<script src="assets/testimonials.js?v=20261019d" defer></script>
 </body>
 </html>

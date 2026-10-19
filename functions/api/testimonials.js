@@ -9,7 +9,8 @@ const PAGES = ["Home", "About", "Impact", "Work", "Services", "Speaking", "Partn
 function attribution(r) {
   const f = r.fields;
   const name = f["Full name"] || "";
-  const parts = name.split(/\s+/);
+  let parts = name.split(/\s+/);
+  if (parts.length > 2 && /^(dr|mr|mrs|ms|mx|rev|prof)\.?$/i.test(parts[0])) parts = parts.slice(1);
   const short = parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0]}.` : name;
   const title = f["Title or role"] || "";
   const org = f["Organization"] || "";
