@@ -4,7 +4,7 @@
 // With strict=1 (service pages), only tagged testimonials are returned, even if that is none.
 // Needs AIRTABLE_TOKEN with data.records:read, plus AIRTABLE_BASE and AIRTABLE_TABLE.
 
-const PAGES = ["Home", "Impact", "Work", "Services", "Speaking", "Partnerships", "Leadership", "Community"];
+const PAGES = ["Home", "About", "Impact", "Work", "Services", "Speaking", "Partnerships", "Leadership", "Community"];
 
 function attribution(r) {
   const f = r.fields;

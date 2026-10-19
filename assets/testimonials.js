@@ -131,7 +131,7 @@
       var bq = document.createElement("blockquote");
       bq.style.margin = "0";
       bq.style.fontFamily = "var(--font-display)";
-      bq.style.fontSize = "var(--step-3)";
+      bq.style.fontSize = t.quote.length > 320 ? "var(--step-1)" : t.quote.length > 160 ? "var(--step-2)" : "var(--step-3)";
       bq.style.lineHeight = "1.2";
       var q = document.createElement("p"); q.textContent = t.quote; q.style.maxWidth = "none";
       bq.appendChild(q);
