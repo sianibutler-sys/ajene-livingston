@@ -54,7 +54,7 @@ export async function onRequestGet({ request, env }) {
       attribution: a.line,
       lead: a.lead,
       detail: a.detail,
-      organization: anonymous ? "" : (f["Organization"] || ""),
+      organization: anonymous || override ? "" : (f["Organization"] || ""),
       photo: !anonymous && f["Show my photo"] && f["Headshot"] && f["Headshot"][0] ? f["Headshot"][0].url : "",
       logo: !anonymous && f["Show organization logo"] && f["Organization logo"] && f["Organization logo"][0] ? f["Organization logo"][0].url : "",
     };
