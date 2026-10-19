@@ -246,58 +246,41 @@
     .catch(function () { /* no API in preview: keep the placeholder */ });
 
   function render(items) {
-    var i = 0;
     mount.innerHTML = "";
-    var wrap = document.createElement("div");
-    wrap.className = "t-slider";
-    var slide = document.createElement("figure");
-    slide.className = "t-slide";
-    slide.style.margin = "0";
-    slide.setAttribute("aria-live", "polite");
-    wrap.appendChild(slide);
-
-    function show(n) {
-      var t = items[n];
-      slide.innerHTML = "";
+    var list = document.createElement("div");
+    list.className = "t-wall " + (items.length === 1 ? "t-wall--one" : "t-wall--many");
+    if (items.length > 1) { list.setAttribute("role", "list"); }
+    items.forEach(function (t) {
+      var fig = document.createElement("figure");
+      fig.className = "t-card";
+      if (items.length > 1) fig.setAttribute("role", "listitem");
+      var mark = document.createElement("span");
+      mark.className = "t-card__mark"; mark.setAttribute("aria-hidden", "true"); mark.textContent = "\u201C";
+      var bq = document.createElement("blockquote");
+      bq.className = "t-card__quote" + (t.quote.length > 340 ? " is-long" : t.quote.length > 180 ? " is-mid" : "");
+      var q = document.createElement("p"); q.textContent = t.quote; bq.appendChild(q);
+      var cap = document.createElement("figcaption");
+      cap.className = "t-card__by";
       if (t.photo) {
         var img = document.createElement("img");
-        img.className = "t-slide__photo"; img.src = t.photo; img.alt = t.name ? "Photo of " + t.name : ""; img.width = 88; img.height = 88;
-        slide.appendChild(img);
+        img.className = "t-card__photo"; img.src = t.photo; img.alt = ""; img.width = 56; img.height = 56; img.loading = "lazy";
+        cap.appendChild(img);
       }
-      var body = document.createElement("div");
-      var bq = document.createElement("blockquote");
-      bq.style.margin = "0";
-      bq.style.fontFamily = "var(--font-display)";
-      bq.style.fontSize = t.quote.length > 320 ? "var(--step-1)" : t.quote.length > 160 ? "var(--step-2)" : "var(--step-3)";
-      bq.style.lineHeight = "1.2";
-      var q = document.createElement("p"); q.textContent = t.quote; q.style.maxWidth = "none";
-      bq.appendChild(q);
-      var cap = document.createElement("figcaption");
-      cap.style.marginTop = "1rem"; cap.style.color = "var(--muted)";
-      cap.textContent = t.attribution;
-      body.appendChild(bq); body.appendChild(cap);
+      var who = document.createElement("span"); who.className = "t-card__who";
+      var lead = document.createElement("span"); lead.className = "t-card__name"; lead.textContent = t.lead || t.attribution;
+      who.appendChild(lead);
+      if (t.detail) { var det = document.createElement("span"); det.className = "t-card__detail"; det.textContent = t.detail; who.appendChild(det); }
+      cap.appendChild(who);
       if (t.logo) {
         var logo = document.createElement("img");
-        logo.className = "t-slide__logo"; logo.src = t.logo; logo.alt = t.organization ? t.organization + " logo" : "";
-        body.appendChild(logo);
+        logo.className = "t-card__logo"; logo.src = t.logo; logo.alt = t.organization ? t.organization + " logo" : ""; logo.loading = "lazy";
+        cap.appendChild(logo);
       }
-      slide.appendChild(body);
-      if (counter) counter.textContent = (n + 1) + " of " + items.length;
-    }
-
-    var counter = null;
-    if (items.length > 1) {
-      var controls = document.createElement("div");
-      controls.className = "t-controls";
-      var prev = document.createElement("button"); prev.type = "button"; prev.setAttribute("aria-label", "Previous testimonial"); prev.textContent = "←";
-      var next = document.createElement("button"); next.type = "button"; next.setAttribute("aria-label", "Next testimonial"); next.textContent = "→";
-      counter = document.createElement("span"); counter.className = "t-count";
-      prev.addEventListener("click", function () { i = (i - 1 + items.length) % items.length; show(i); });
-      next.addEventListener("click", function () { i = (i + 1) % items.length; show(i); });
-      controls.appendChild(prev); controls.appendChild(next); controls.appendChild(counter);
-      wrap.appendChild(controls);
-    }
-    mount.appendChild(wrap);
-    show(0);
+      fig.appendChild(mark); fig.appendChild(bq); fig.appendChild(cap);
+      list.appendChild(fig);
+    });
+    mount.appendChild(list);
+    var layout = mount.closest(".t-layout");
+    if (layout) layout.classList.add(items.length === 1 ? "t-layout--one" : "t-layout--many");
   }
 })();

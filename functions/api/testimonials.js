@@ -16,11 +16,11 @@ function attribution(r) {
   const org = f["Organization"] || "";
   const join = (...xs) => xs.filter(Boolean).join(", ");
   switch (f["Display name as"]) {
-    case "Full name and organization": return { name, line: join(name, org) };
-    case "First name, last initial, and organization": return { name: short, line: join(short, org) };
-    case "Title and organization only": return { name: "", line: join(title, org) };
-    case "Anonymous": return { name: "", line: f["How we worked together"] || "Client" };
-    default: return { name, line: join(name, title, org) };
+    case "Full name and organization": return { name, line: join(name, org), lead: name, detail: org };
+    case "First name, last initial, and organization": return { name: short, line: join(short, org), lead: short, detail: org };
+    case "Title and organization only": return { name: "", line: join(title, org), lead: title || org, detail: title ? org : "" };
+    case "Anonymous": { const rel = f["How we worked together"] || "Client"; return { name: "", line: rel, lead: rel, detail: "" }; }
+    default: return { name, line: join(name, title, org), lead: name, detail: join(title, org) };
   }
 }
 
@@ -50,6 +50,8 @@ export async function onRequestGet({ request, env }) {
       quote,
       name: a.name,
       attribution: a.line,
+      lead: a.lead,
+      detail: a.detail,
       organization: anonymous ? "" : (f["Organization"] || ""),
       photo: !anonymous && f["Show my photo"] && f["Headshot"] && f["Headshot"][0] ? f["Headshot"][0].url : "",
       logo: !anonymous && f["Show organization logo"] && f["Organization logo"] && f["Organization logo"][0] ? f["Organization logo"][0].url : "",
