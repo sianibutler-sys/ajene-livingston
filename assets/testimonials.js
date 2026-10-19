@@ -270,12 +270,12 @@
       var lead = document.createElement("span"); lead.className = "t-card__name"; lead.textContent = t.lead || t.attribution;
       who.appendChild(lead);
       if (t.detail) { var det = document.createElement("span"); det.className = "t-card__detail"; det.textContent = t.detail; who.appendChild(det); }
-      cap.appendChild(who);
       if (t.logo) {
         var logo = document.createElement("img");
         logo.className = "t-card__logo"; logo.src = t.logo; logo.alt = t.organization ? t.organization + " logo" : ""; logo.loading = "lazy";
-        cap.appendChild(logo);
+        who.appendChild(logo);
       }
+      cap.appendChild(who);
       fig.appendChild(mark); fig.appendChild(bq); fig.appendChild(cap);
       list.appendChild(fig);
     });
