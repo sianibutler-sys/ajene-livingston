@@ -271,6 +271,26 @@
     box.querySelectorAll('[data-event="past"]').forEach(function (el) { el.hidden = false; });
   });
 
+  /* Back-to-top button on long pages */
+  var main = document.getElementById("main");
+  if (main && main.scrollHeight > window.innerHeight * 3) {
+    var topBtn = document.createElement("button");
+    topBtn.type = "button";
+    topBtn.className = "back-to-top";
+    topBtn.setAttribute("aria-label", "Back to top");
+    topBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+    document.body.appendChild(topBtn);
+    var showAt = window.innerHeight * 1.5;
+    var syncTop = function () { topBtn.classList.toggle("is-visible", window.scrollY > showAt); };
+    window.addEventListener("scroll", syncTop, { passive: true });
+    syncTop();
+    topBtn.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+      var skip = document.querySelector(".brand");
+      if (skip) skip.focus({ preventScroll: true });
+    });
+  }
+
   var year = document.getElementById("year");
   if (year) year.textContent = String(new Date().getFullYear());
 })();
