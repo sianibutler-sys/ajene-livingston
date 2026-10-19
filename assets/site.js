@@ -230,12 +230,29 @@
         errors[0].focus();
         return;
       }
-      /* Launch: send FormData to the form endpoint (a Cloudflare Pages Function or a form service) here. */
-      status.setAttribute("data-state", "success");
+      var btn = form.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      status.removeAttribute("data-state");
+      status.textContent = "Sending…";
       var first = form.querySelector("#name").value.trim().split(" ")[0];
-      status.textContent = "Thank you, " + first + ". Your message is ready. I reply within two business days.";
-      form.reset();
-      status.focus();
+      fetch("/api/contact", { method: "POST", body: new FormData(form) })
+        .then(function (res) { return res.json().catch(function () { return {}; }).then(function (body) { return { ok: res.ok, body: body }; }); })
+        .then(function (r) {
+          if (!r.ok) throw new Error(r.body && r.body.error && r.body.error !== "send failed" ? r.body.error : "send failed");
+          status.setAttribute("data-state", "success");
+          status.textContent = "Thank you, " + first + ". Your message reached me, and I'll reply within two business days.";
+          form.reset();
+          btn.disabled = false;
+          status.focus();
+        })
+        .catch(function (err) {
+          btn.disabled = false;
+          status.setAttribute("data-state", "error");
+          status.textContent = err.message === "send failed" || /fetch|network|load failed/i.test(err.message)
+            ? "Your message couldn't be sent right now. Please email hello@ajenelivingston.com instead."
+            : err.message;
+          status.focus();
+        });
     });
   }
 

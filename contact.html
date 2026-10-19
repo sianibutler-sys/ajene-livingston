@@ -102,17 +102,20 @@
           <p class="hint" id="message-hint">Share the goal, who's involved, and what's getting in the way.</p>
           <p class="error" id="message-error" hidden></p>
         </div>
+        <div class="hp-field" aria-hidden="true">
+          <label for="website_check">Leave this field empty</label>
+          <input type="text" id="website_check" name="website_check" tabindex="-1" autocomplete="off">
+        </div>
         <div class="actions">
           <button class="btn" type="submit">Send message</button>
         </div>
         <p class="form-status" id="form-status" role="status" aria-live="polite" tabindex="-1" hidden></p>
-        <p class="preview-note">Preview: the form checks every field now and connects to email at launch.</p>
       </form>
 
       <aside class="aside-card" aria-labelledby="direct-title">
         <h2 id="direct-title">Prefer email?</h2>
         <div class="contact-line">
-          <code id="email-address">hello@ajenelivingston.com</code>
+          <a class="text-link contact-email" id="email-address" href="mailto:hello@ajenelivingston.com">hello@ajenelivingston.com</a>
           <button class="btn btn--small btn--outline" type="button" data-copy="email-address" data-status="email-status">Copy</button>
         </div>
         <p class="copy-status" id="email-status" role="status" aria-live="polite"></p>
@@ -150,7 +153,7 @@
       <div>
         <h2>Connect</h2>
         <ul class="footer-list">
-          <li><span class="placeholder-text">email address</span></li>
+          <li><a href="mailto:hello@ajenelivingston.com">hello@ajenelivingston.com</a></li>
           <li><a href="https://www.linkedin.com/in/ajen%C3%A9-livingston-2b1a8a161/">LinkedIn</a></li>
           <li>Instagram <span class="placeholder-text">profile link</span></li>
         </ul>
