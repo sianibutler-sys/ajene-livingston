@@ -44,6 +44,8 @@ export async function onRequestGet({ request, env }) {
   const testimonials = records.map((r) => {
     const f = r.fields;
     const a = attribution(r);
+    const override = (f["Byline override"] || "").trim();
+    if (override && f["Display name as"] !== "Anonymous") { a.detail = override; a.line = [a.lead, override].filter(Boolean).join(", "); }
     const quote = (f["OK to edit for length"] && f["Edited quote"]) ? f["Edited quote"] : f["Testimonial"];
     const anonymous = f["Display name as"] === "Anonymous";
     return {
