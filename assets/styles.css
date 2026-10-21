@@ -718,3 +718,6 @@ input[type="file"]::file-selector-button:hover { background: var(--ink); color: 
 .receipt .facts div { grid-template-columns: 8rem minmax(0, 1fr); }
 @media (max-width: 600px) { .receipt { padding: 1.25rem; } .receipt .facts div { grid-template-columns: minmax(0, 1fr); gap: 0.2rem; } }
 @media print { .site-header, .site-footer, .back-to-top, .page-hero, .thanks-page .actions { display: none !important; } .receipt, .thanks { background: none !important; color: #000 !important; border: 1px solid #999; } }
+
+.case__reflection { margin: var(--space-3) 0 0; font-style: italic; color: var(--muted); max-width: 60ch; }
+.case__figure { margin-top: var(--space-3); width: 100%; height: auto; border: 1px solid var(--line); }
