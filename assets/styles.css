@@ -721,3 +721,7 @@ input[type="file"]::file-selector-button:hover { background: var(--ink); color: 
 
 .case__reflection { margin: var(--space-3) 0 0; font-style: italic; color: var(--muted); max-width: 60ch; }
 .case__figure { margin-top: var(--space-3); width: 100%; height: auto; border: 1px solid var(--line); }
+
+.by-sc { display: inline-flex; align-items: center; gap: 7px; margin: 0; }
+.by-sc img { height: 13px; width: auto; opacity: .6; }
+@media (max-width: 600px) { .footer-legal { flex-direction: column; align-items: flex-start; gap: 0.4rem; padding-bottom: 4.5rem; } }
