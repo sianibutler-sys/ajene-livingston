@@ -797,3 +797,48 @@ html.story-open { overflow: hidden; }
   .filters::-webkit-scrollbar { display: none; }
   .filters .chip { flex: none; }
 }
+
+/* ===== Rails: collections swipe sideways on phones; arrows and a counter appear whenever a rail overflows ===== */
+.rail-nav { display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem; }
+.rail-nav[hidden] { display: none; }
+.rail-nav__btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-size: 1.15rem; line-height: 1; cursor: pointer; display: inline-grid; place-items: center; }
+.rail-nav__btn:hover:not(:disabled) { border-color: var(--clay); color: var(--clay); }
+.rail-nav__btn:disabled { opacity: 0.35; cursor: default; }
+.rail-nav__count { font-size: var(--step--1); color: var(--muted); font-variant-numeric: tabular-nums; min-width: 4.5ch; }
+.rail { scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+@media (max-width: 600px) {
+  .rail { display: grid; grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 84%; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; padding-bottom: 0.25rem; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); }
+  .rail > * { scroll-snap-align: start; }
+  .rail > [hidden] { display: none !important; }
+  .gallery-grid.rail { grid-auto-columns: 72%; gap: 0.75rem; }
+  .leadlab__pillars.rail { margin-top: 1.5rem; }
+}
+/* Voices on the home page: one voice at a time, at every width */
+.t-wall.rail--always { display: grid; grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 100%; overflow-x: auto; scroll-snap-type: x mandatory; gap: 2rem; }
+.t-wall.rail--always > * { scroll-snap-align: start; }
+.t-wall.rail--always .t-card { border-top: 0; padding-top: 0; }
+@media (max-width: 600px) { .t-wall.rail--always { grid-auto-columns: 100%; margin-inline: 0; padding-inline: 0; } }
+
+/* Community and service cards without a photo */
+.pcard__img--type { display: grid; place-items: end start; padding: 1.25rem; background: var(--mahogany); color: var(--on-dark); font-family: var(--font-display); font-size: var(--step-3); line-height: 1.1; }
+/* One story card on a service page: image beside text on wide screens */
+.pcards--wide { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) {
+  .pcards--wide .pcard__link { flex-direction: row; }
+  .pcards--wide .pcard__img { width: 46%; aspect-ratio: auto; min-height: 18rem; }
+  .pcards--wide .pcard__text { padding: clamp(1.5rem, 3vw, 2.5rem); justify-content: center; }
+  .pcards--wide .pcard__title { font-size: var(--step-3); }
+  .pcards--wide .pcard__more { margin-top: 0.5rem; }
+}
+
+/* Speaking topic cards */
+.tcards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: clamp(1rem, 2.5vw, 1.5rem); }
+.tcard { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.5rem 1.4rem 1.6rem; background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius); }
+.tcard__num { font-family: var(--font-display); font-size: var(--step-3); color: var(--clay); line-height: 1; }
+.tcard__title { font-size: var(--step-2); line-height: 1.15; margin: 0; }
+.tcard__sub { font-size: var(--step--1); font-weight: 600; color: var(--muted); margin: 0; }
+.tcard__body { color: var(--ink); line-height: 1.55; margin: 0; padding-top: 0.6rem; border-top: 1px solid var(--line); }
+.tcard__body a { color: inherit; }
+/* Home Voices rail sits beside its heading, like a single voice does */
+@media (min-width: 861px) { .t-layout:has(.rail--always) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; } }

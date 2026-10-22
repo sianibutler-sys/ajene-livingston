@@ -304,7 +304,12 @@
       if (items.length > 1) fig.setAttribute("role", "listitem");
       list.appendChild(fig);
     });
+    if (items.length > 1 && !mount.closest(".case__voices")) {
+      list.classList.add("rail");
+      if (mount.getAttribute("data-rail") === "always") list.classList.add("rail--always");
+    }
     mount.appendChild(list);
+    if (window.initRails) window.initRails(mount);
     var layout = mount.closest(".t-layout");
     if (layout) layout.classList.add(items.length === 1 ? "t-layout--one" : "t-layout--many");
     var head = layout && layout.querySelector(".t-head");

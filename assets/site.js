@@ -161,6 +161,42 @@
   }
 
 
+
+  /* Rails: arrows and a "2 / 5" counter for any collection that scrolls sideways */
+  function initRail(rail) {
+    if (rail.__rail) return; rail.__rail = true;
+    var nav = document.createElement("div");
+    nav.className = "rail-nav"; nav.hidden = true;
+    nav.innerHTML = '<button type="button" class="rail-nav__btn" data-dir="-1" aria-label="Previous">\u2190</button><span class="rail-nav__count" aria-live="polite"></span><button type="button" class="rail-nav__btn" data-dir="1" aria-label="Next">\u2192</button>';
+    rail.insertAdjacentElement("afterend", nav);
+    var count = nav.querySelector(".rail-nav__count"), prev = nav.querySelector('[data-dir="-1"]'), next = nav.querySelector('[data-dir="1"]');
+    function items() { return Array.prototype.filter.call(rail.children, function (c) { return !c.hidden && c.offsetParent !== null; }); }
+    function step() { var it = items(); return it.length > 1 ? it[1].offsetLeft - it[0].offsetLeft : rail.clientWidth; }
+    function update() {
+      var it = items(), over = rail.scrollWidth > rail.clientWidth + 4;
+      nav.hidden = !over || it.length < 2;
+      if (nav.hidden) return;
+      var s = step() || 1, i = Math.round(rail.scrollLeft / s);
+      var perView = Math.max(1, Math.round(rail.clientWidth / s));
+      var last = Math.max(0, it.length - perView);
+      i = Math.min(i, last);
+      count.textContent = (i + 1) + " / " + (last + 1);
+      prev.disabled = rail.scrollLeft < 4;
+      next.disabled = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
+    }
+    nav.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-dir]"); if (!b) return;
+      rail.scrollBy({ left: Number(b.getAttribute("data-dir")) * step(), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    });
+    var t; rail.addEventListener("scroll", function () { cancelAnimationFrame(t); t = requestAnimationFrame(update); }, { passive: true });
+    window.addEventListener("resize", update);
+    if (window.ResizeObserver) new ResizeObserver(update).observe(rail);
+    if (window.MutationObserver) new MutationObserver(update).observe(rail, { attributes: true, subtree: true, attributeFilter: ["hidden"] });
+    update();
+  }
+  window.initRails = function (root) { (root || document).querySelectorAll(".rail").forEach(initRail); };
+  window.initRails();
+
   /* Project stories (Impact): cards open the full story in a dialog; #id in the URL opens it too */
   var storyLinks = document.querySelectorAll("[data-story]");
   if (storyLinks.length && typeof HTMLDialogElement === "function") {
