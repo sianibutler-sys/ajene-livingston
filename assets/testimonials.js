@@ -229,117 +229,76 @@
   }
 
   /* ---------- Published testimonials on the site ---------- */
-  var mount = document.querySelector("[data-testimonials]");
-  if (!mount) return;
-  var page = mount.getAttribute("data-testimonials");
+  /* Every [data-testimonials="key"] spot on the page is filled from one request.
+     "all" is the Testimonials page. A key matches the "Featured on" tags in Airtable.
+     data-strict: show only tagged testimonials (and keep the section hidden if none).
+     Without data-strict (homepage): tagged ones, or every one if none are tagged. */
+  var mounts = Array.prototype.slice.call(document.querySelectorAll("[data-testimonials]"));
+  if (!mounts.length) return;
 
-  var strict = mount.hasAttribute("data-strict");
-  var archive = page === "all";
-  var section = mount.closest("[data-testimonials-section]");
-  fetch(archive ? "/api/testimonials" : "/api/testimonials?page=" + encodeURIComponent(page) + (strict ? "&strict=1" : ""))
+  fetch("/api/testimonials")
     .then(function (res) { if (!res.ok) throw new Error(); return res.json(); })
     .then(function (data) {
-      var items = (data && data.testimonials) || [];
-      if (!items.length) return; /* keep the placeholder, or keep a strict section hidden */
-      if (section) section.hidden = false;
-      if (archive) renderArchive(items); else render(items);
+      var all = (data && data.testimonials) || [];
+      mounts.forEach(function (mount) {
+        var key = (mount.getAttribute("data-testimonials") || "").toLowerCase();
+        var items;
+        if (key === "all") items = all;
+        else {
+          items = all.filter(function (t) { return (t.pages || []).some(function (p) { return p.toLowerCase() === key; }); });
+          if (!items.length && !mount.hasAttribute("data-strict")) items = all;
+        }
+        if (!items.length) return; /* keep a strict section hidden */
+        var section = mount.closest("[data-testimonials-section]");
+        if (section) section.hidden = false;
+        if (key === "all") renderArchive(mount, items); else render(mount, items);
+      });
     })
-    .catch(function () { /* no API in preview: keep the placeholder */ });
+    .catch(function () { /* no API in the preview: sections stay hidden */ });
+
+  function el(tag, cls) { var n = document.createElement(tag); if (cls) n.className = cls; return n; }
+
+  function paragraphs(text, into) {
+    String(text).split(/\n\s*\n/).forEach(function (para) {
+      if (!para.trim()) return;
+      var p = el("p"); p.textContent = para.trim(); into.appendChild(p);
+    });
+  }
 
   function byline(t, cls) {
-    var cap = document.createElement("figcaption");
-    cap.className = cls || "t-card__by";
+    var cap = el("figcaption", cls || "t-card__by");
     if (t.photo) {
-      var img = document.createElement("img");
-      img.className = "t-card__photo"; img.src = t.photo; img.alt = ""; img.width = 56; img.height = 56; img.loading = "lazy";
+      var img = el("img", "t-card__photo"); img.src = t.photo; img.alt = ""; img.width = 56; img.height = 56; img.loading = "lazy";
       cap.appendChild(img);
     }
-    var who = document.createElement("span"); who.className = "t-card__who";
-    var lead = document.createElement("span"); lead.className = "t-card__name"; lead.textContent = t.lead || t.attribution;
-    who.appendChild(lead);
-    if (t.detail) { var det = document.createElement("span"); det.className = "t-card__detail"; det.textContent = t.detail; who.appendChild(det); }
+    var who = el("span", "t-card__who");
+    var name = el("span", "t-card__name"); name.textContent = t.lead || t.attribution;
+    who.appendChild(name);
+    if (t.detail) { var det = el("span", "t-card__detail"); det.textContent = t.detail; who.appendChild(det); }
     if (t.logo) {
-      var logo = document.createElement("img");
-      logo.className = "t-card__logo"; logo.src = t.logo; logo.alt = t.organization ? t.organization + " logo" : ""; logo.loading = "lazy";
+      var logo = el("img", "t-card__logo"); logo.src = t.logo; logo.alt = t.organization ? t.organization + " logo" : ""; logo.loading = "lazy";
       who.appendChild(logo);
     }
     cap.appendChild(who);
     return cap;
   }
 
-  function paragraphs(text, into) {
-    String(text).split(/\n\s*\n/).forEach(function (para) {
-      if (!para.trim()) return;
-      var p = document.createElement("p"); p.textContent = para.trim(); into.appendChild(p);
-    });
+  function card(t, sized) {
+    var fig = el("figure", "t-card");
+    var mark = el("span", "t-card__mark"); mark.setAttribute("aria-hidden", "true"); mark.textContent = "“";
+    var bq = el("blockquote", "t-card__quote" + (sized ? (t.quote.length > 340 ? " is-long" : t.quote.length > 180 ? " is-mid" : "") : ""));
+    paragraphs(t.quote, bq);
+    fig.appendChild(mark); fig.appendChild(bq); fig.appendChild(byline(t));
+    return fig;
   }
 
-  function renderArchive(items) {
+  function render(mount, items) {
     mount.innerHTML = "";
-    var lead = items[0] && items[0].featured ? items[0] : null;
-    var rest = lead ? items.slice(1) : items;
-    if (lead) {
-      var letter = document.createElement("figure");
-      letter.className = "t-letter";
-      var mark = document.createElement("span");
-      mark.className = "t-card__mark"; mark.setAttribute("aria-hidden", "true"); mark.textContent = "\u201C";
-      var bq = document.createElement("blockquote"); bq.className = "t-letter__text";
-      paragraphs(lead.quote, bq);
-      letter.appendChild(mark); letter.appendChild(bq); letter.appendChild(byline(lead, "t-card__by t-letter__by"));
-      mount.appendChild(letter);
-    }
-    if (rest.length) {
-      var list = document.createElement("div");
-      list.className = "t-columns"; list.setAttribute("role", "list");
-      rest.forEach(function (t) {
-        var fig = document.createElement("figure");
-        fig.className = "t-card"; fig.setAttribute("role", "listitem");
-        var mark = document.createElement("span");
-        mark.className = "t-card__mark"; mark.setAttribute("aria-hidden", "true"); mark.textContent = "\u201C";
-        var bq = document.createElement("blockquote");
-        bq.className = "t-card__quote" + (t.quote.length > 340 ? " is-long" : t.quote.length > 180 ? " is-mid" : "");
-        paragraphs(t.quote, bq);
-        fig.appendChild(mark); fig.appendChild(bq); fig.appendChild(byline(t));
-        list.appendChild(fig);
-      });
-      mount.appendChild(list);
-    }
-    var count = document.getElementById("t-archive-count");
-    if (count) count.textContent = items.length === 1 ? "1 testimonial" : items.length + " testimonials";
-  }
-
-  function render(items) {
-    mount.innerHTML = "";
-    var list = document.createElement("div");
-    list.className = "t-wall " + (items.length === 1 ? "t-wall--one" : "t-wall--many");
-    if (items.length > 1) { list.setAttribute("role", "list"); }
+    var list = el("div", "t-wall " + (items.length === 1 ? "t-wall--one" : "t-wall--many"));
+    if (items.length > 1) list.setAttribute("role", "list");
     items.forEach(function (t) {
-      var fig = document.createElement("figure");
-      fig.className = "t-card";
+      var fig = card(t, true);
       if (items.length > 1) fig.setAttribute("role", "listitem");
-      var mark = document.createElement("span");
-      mark.className = "t-card__mark"; mark.setAttribute("aria-hidden", "true"); mark.textContent = "\u201C";
-      var bq = document.createElement("blockquote");
-      bq.className = "t-card__quote" + (t.quote.length > 340 ? " is-long" : t.quote.length > 180 ? " is-mid" : "");
-      paragraphs(t.quote, bq);
-      var cap = document.createElement("figcaption");
-      cap.className = "t-card__by";
-      if (t.photo) {
-        var img = document.createElement("img");
-        img.className = "t-card__photo"; img.src = t.photo; img.alt = ""; img.width = 56; img.height = 56; img.loading = "lazy";
-        cap.appendChild(img);
-      }
-      var who = document.createElement("span"); who.className = "t-card__who";
-      var lead = document.createElement("span"); lead.className = "t-card__name"; lead.textContent = t.lead || t.attribution;
-      who.appendChild(lead);
-      if (t.detail) { var det = document.createElement("span"); det.className = "t-card__detail"; det.textContent = t.detail; who.appendChild(det); }
-      if (t.logo) {
-        var logo = document.createElement("img");
-        logo.className = "t-card__logo"; logo.src = t.logo; logo.alt = t.organization ? t.organization + " logo" : ""; logo.loading = "lazy";
-        who.appendChild(logo);
-      }
-      cap.appendChild(who);
-      fig.appendChild(mark); fig.appendChild(bq); fig.appendChild(cap);
       list.appendChild(fig);
     });
     mount.appendChild(list);
@@ -347,9 +306,30 @@
     if (layout) layout.classList.add(items.length === 1 ? "t-layout--one" : "t-layout--many");
     var head = layout && layout.querySelector(".t-head");
     if (head && !head.querySelector(".t-all")) {
-      var more = document.createElement("p"); more.className = "t-all";
-      var a = document.createElement("a"); a.className = "text-link"; a.href = "testimonials.html"; a.textContent = "Read every testimonial";
+      var more = el("p", "t-all");
+      var a = el("a", "text-link"); a.href = "testimonials.html"; a.textContent = "Read every testimonial";
       more.appendChild(a); head.appendChild(more);
     }
+  }
+
+  function renderArchive(mount, items) {
+    mount.innerHTML = "";
+    var lead = items[0] && items[0].featured ? items[0] : null;
+    var rest = lead ? items.slice(1) : items;
+    if (lead) {
+      var letter = el("figure", "t-letter");
+      var mark = el("span", "t-card__mark"); mark.setAttribute("aria-hidden", "true"); mark.textContent = "“";
+      var bq = el("blockquote", "t-letter__text");
+      paragraphs(lead.quote, bq);
+      letter.appendChild(mark); letter.appendChild(bq); letter.appendChild(byline(lead, "t-card__by t-letter__by"));
+      mount.appendChild(letter);
+    }
+    if (rest.length) {
+      var list = el("div", "t-columns"); list.setAttribute("role", "list");
+      rest.forEach(function (t) { var fig = card(t, false); fig.setAttribute("role", "listitem"); list.appendChild(fig); });
+      mount.appendChild(list);
+    }
+    var count = document.getElementById("t-archive-count");
+    if (count) count.textContent = items.length + " people, in their own words";
   }
 })();

@@ -2,11 +2,11 @@
 // Returns testimonials that are Published, have permission, and allow Website use.
 // If any are tagged for this page under "Featured on", only those are returned.
 // With strict=1 (service pages), only tagged testimonials are returned, even if that is none.
-// With no page (the testimonials page), every published testimonial is returned: the one marked
-// "Lead on testimonials page" first, then by the optional "Display order" number, then newest first.
+// With no page, every published testimonial is returned with its "Featured on" tags, so the site can fill
+// every spot on a page from one request. Order: "Lead on testimonials page" first, then "Display order", then newest.
 // Needs AIRTABLE_TOKEN with data.records:read, plus AIRTABLE_BASE and AIRTABLE_TABLE.
 
-const PAGES = ["Home", "About", "Impact", "Work", "Services", "Speaking", "Partnerships", "Leadership", "Community"];
+const PAGES = ["Home", "About", "Impact", "Work", "Services", "Speaking", "Partnerships", "Leadership", "Community", "Tastes of Coatesville", "Ruth Legacy Project", "Juneteenth", "Cultural Society", "Business on Board", "America250"];
 
 function attribution(r) {
   const f = r.fields;
@@ -38,8 +38,8 @@ export async function onRequestGet({ request, env }) {
   if (!res.ok) return new Response(JSON.stringify({ testimonials: [] }), { status: 200, headers: { "content-type": "application/json" } });
 
   let records = (await res.json()).records || [];
-  if (!page) {
-    // Testimonials page: the lead letter first, then any hand-set order, then newest first.
+  {
+    // Lead letter first, then the hand-set Display order, then newest first.
     const order = (r) => (typeof r.fields["Display order"] === "number" ? r.fields["Display order"] : 9999);
     records = records
       .map((r, i) => ({ r, i }))
@@ -65,6 +65,7 @@ export async function onRequestGet({ request, env }) {
       lead: a.lead,
       detail: a.detail,
       featured: Boolean(f["Lead on testimonials page"]),
+      pages: f["Featured on"] || [],
       organization: anonymous || override ? "" : (f["Organization"] || ""),
       photo: !anonymous && f["Show my photo"] && f["Headshot"] && f["Headshot"][0] ? f["Headshot"][0].url : "",
       logo: !anonymous && f["Show organization logo"] && f["Organization logo"] && f["Organization logo"][0] ? f["Organization logo"][0].url : "",

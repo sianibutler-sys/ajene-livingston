@@ -742,3 +742,11 @@ input[type="file"]::file-selector-button:hover { background: var(--ink); color: 
 .page-hero--center .eyebrow { justify-content: center; }
 .t-columns .t-card__quote, .t-columns .t-card__quote.is-mid, .t-columns .t-card__quote.is-long { font-size: 1.3rem; line-height: 1.45; }
 @media (max-width: 600px) { .t-columns .t-card__quote, .t-columns .t-card__quote.is-mid, .t-columns .t-card__quote.is-long { font-size: 1.15rem; line-height: 1.5; } }
+
+.case__voices { margin-top: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+.case__voices-title { margin: 0; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--clay); }
+.case__voices .t-wall { gap: var(--space-3); }
+.case__voices .t-wall--many { grid-template-columns: minmax(0, 1fr); }
+.case__voices .t-card__quote, .case__voices .t-card__quote.is-mid, .case__voices .t-card__quote.is-long { font-size: 1.2rem; line-height: 1.45; }
+.case__voices--card { margin-top: var(--space-2); }
+@media (max-width: 600px) { .case__voices .t-wall--many { grid-auto-flow: row; grid-auto-columns: auto; overflow: visible; margin-inline: 0; padding-inline: 0; } }
