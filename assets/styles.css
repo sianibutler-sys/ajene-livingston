@@ -846,3 +846,5 @@ html.story-open { overflow: hidden; }
 .pcard__logos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; justify-items: center; gap: clamp(0.75rem, 2vw, 1.25rem); padding: clamp(1rem, 3vw, 1.75rem); background: #fff; border-bottom: 1px solid var(--line); }
 .pcard__logos img { width: 100%; max-height: 7rem; object-fit: contain; }
 .pcard__logos img[src*="ymca"] { max-height: 3.25rem; }
+.pcard__credit { font-size: 0.75rem; line-height: 1.4; color: var(--muted); padding-top: 0.6rem; border-top: 1px solid var(--line); margin-top: 0.4rem; }
+.pcard__credit cite { font-style: italic; }
