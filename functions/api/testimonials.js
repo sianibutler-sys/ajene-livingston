@@ -66,6 +66,8 @@ export async function onRequestGet({ request, env }) {
       detail: a.detail,
       featured: Boolean(f["Lead on testimonials page"]),
       pages: f["Featured on"] || [],
+      pull: (f["Pull line"] || "").trim(),
+      room: f["Room"] || "",
       organization: anonymous || override ? "" : (f["Organization"] || ""),
       photo: !anonymous && f["Show my photo"] && f["Headshot"] && f["Headshot"][0] ? f["Headshot"][0].url : "",
       logo: !anonymous && f["Show organization logo"] && f["Organization logo"] && f["Organization logo"][0] ? f["Organization logo"][0].url : "",

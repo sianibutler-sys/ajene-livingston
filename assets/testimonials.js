@@ -284,11 +284,14 @@
   }
 
   function card(t, sized) {
-    var fig = el("figure", "t-card");
-    var mark = el("span", "t-card__mark"); mark.setAttribute("aria-hidden", "true"); mark.textContent = "“";
-    var bq = el("blockquote", "t-card__quote" + (sized ? (t.quote.length > 340 ? " is-long" : t.quote.length > 180 ? " is-mid" : "") : ""));
+    var fig = el("figure", "t-card" + (t.pull ? " t-card--pull" : ""));
+    var mark = el("span", "t-card__mark"); mark.setAttribute("aria-hidden", "true"); mark.textContent = "\u201C";
+    fig.appendChild(mark);
+    if (t.pull) { var pl = el("p", "t-card__pull"); pl.textContent = t.pull; pl.setAttribute("aria-hidden", "true"); fig.appendChild(pl); }
+    var size = t.pull ? " is-body" : (sized ? (t.quote.length > 340 ? " is-long" : t.quote.length > 180 ? " is-mid" : "") : "");
+    var bq = el("blockquote", "t-card__quote" + size);
     paragraphs(t.quote, bq);
-    fig.appendChild(mark); fig.appendChild(bq); fig.appendChild(byline(t));
+    fig.appendChild(bq); fig.appendChild(byline(t));
     return fig;
   }
 
@@ -307,10 +310,18 @@
     var head = layout && layout.querySelector(".t-head");
     if (head && !head.querySelector(".t-all")) {
       var more = el("p", "t-all");
-      var a = el("a", "text-link"); a.href = "testimonials.html"; a.textContent = "Read every testimonial";
+      var a = el("a", "text-link"); a.href = "testimonials.html"; a.textContent = "Read all the voices";
       more.appendChild(a); head.appendChild(more);
     }
   }
+
+  var ROOMS = [
+    { name: "The rehearsal room", note: "The Coatesville Cultural Society, the stage, and the conversations that kept going after the show." },
+    { name: "The board room", note: "Boards I have served on, and boards I have helped find their way forward." },
+    { name: "The community room", note: "Juneteenth, the Alliance, City Hall, and the everyday work of Coatesville." }
+  ];
+
+  function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
 
   function renderArchive(mount, items) {
     mount.innerHTML = "";
@@ -318,18 +329,41 @@
     var rest = lead ? items.slice(1) : items;
     if (lead) {
       var letter = el("figure", "t-letter");
-      var mark = el("span", "t-card__mark"); mark.setAttribute("aria-hidden", "true"); mark.textContent = "“";
+      if (lead.pull) { var pl = el("p", "t-letter__pull"); pl.textContent = lead.pull; pl.setAttribute("aria-hidden", "true"); letter.appendChild(pl); }
       var bq = el("blockquote", "t-letter__text");
       paragraphs(lead.quote, bq);
-      letter.appendChild(mark); letter.appendChild(bq); letter.appendChild(byline(lead, "t-card__by t-letter__by"));
+      letter.appendChild(bq); letter.appendChild(byline(lead, "t-card__by t-letter__by"));
       mount.appendChild(letter);
     }
-    if (rest.length) {
+    var groups = ROOMS.map(function (r) { return { name: r.name, note: r.note, items: [] }; });
+    var more = { name: "More voices", note: "", items: [] };
+    rest.forEach(function (t) {
+      var g = groups.filter(function (x) { return x.name === t.room; })[0] || more;
+      g.items.push(t);
+    });
+    if (more.items.length) groups.push(more);
+    var nav = el("nav", "t-rooms-nav"); nav.setAttribute("aria-label", "Rooms");
+    groups.forEach(function (g) {
+      if (!g.items.length) return;
+      var a = el("a", "chip"); a.href = "#" + slug(g.name); var label = g.name.replace(/^The /, ""); a.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+      nav.appendChild(a);
+    });
+    if (nav.children.length > 1) mount.appendChild(nav);
+    groups.forEach(function (g) {
+      if (!g.items.length) return;
+      var sec = el("section", "t-room"); sec.id = slug(g.name);
+      var head = el("div", "t-room__head");
+      var h = el("h2", "t-room__title"); h.textContent = g.name; head.appendChild(h);
+      var meta = el("p", "t-room__note");
+      meta.textContent = (g.note ? g.note + " " : "") + (g.items.length === 1 ? "1 voice." : g.items.length + " voices.");
+      head.appendChild(meta);
+      sec.appendChild(head);
       var list = el("div", "t-columns"); list.setAttribute("role", "list");
-      rest.forEach(function (t) { var fig = card(t, false); fig.setAttribute("role", "listitem"); list.appendChild(fig); });
-      mount.appendChild(list);
-    }
+      g.items.forEach(function (t) { var fig = card(t, false); fig.setAttribute("role", "listitem"); list.appendChild(fig); });
+      sec.appendChild(list);
+      mount.appendChild(sec);
+    });
     var count = document.getElementById("t-archive-count");
-    if (count) count.textContent = items.length + " people, in their own words";
+    if (count) count.textContent = items.length + " voices";
   }
 })();
