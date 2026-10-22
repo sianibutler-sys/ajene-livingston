@@ -234,16 +234,79 @@
   var page = mount.getAttribute("data-testimonials");
 
   var strict = mount.hasAttribute("data-strict");
+  var archive = page === "all";
   var section = mount.closest("[data-testimonials-section]");
-  fetch("/api/testimonials?page=" + encodeURIComponent(page) + (strict ? "&strict=1" : ""))
+  fetch(archive ? "/api/testimonials" : "/api/testimonials?page=" + encodeURIComponent(page) + (strict ? "&strict=1" : ""))
     .then(function (res) { if (!res.ok) throw new Error(); return res.json(); })
     .then(function (data) {
       var items = (data && data.testimonials) || [];
       if (!items.length) return; /* keep the placeholder, or keep a strict section hidden */
       if (section) section.hidden = false;
-      render(items);
+      if (archive) renderArchive(items); else render(items);
     })
     .catch(function () { /* no API in preview: keep the placeholder */ });
+
+  function byline(t, cls) {
+    var cap = document.createElement("figcaption");
+    cap.className = cls || "t-card__by";
+    if (t.photo) {
+      var img = document.createElement("img");
+      img.className = "t-card__photo"; img.src = t.photo; img.alt = ""; img.width = 56; img.height = 56; img.loading = "lazy";
+      cap.appendChild(img);
+    }
+    var who = document.createElement("span"); who.className = "t-card__who";
+    var lead = document.createElement("span"); lead.className = "t-card__name"; lead.textContent = t.lead || t.attribution;
+    who.appendChild(lead);
+    if (t.detail) { var det = document.createElement("span"); det.className = "t-card__detail"; det.textContent = t.detail; who.appendChild(det); }
+    if (t.logo) {
+      var logo = document.createElement("img");
+      logo.className = "t-card__logo"; logo.src = t.logo; logo.alt = t.organization ? t.organization + " logo" : ""; logo.loading = "lazy";
+      who.appendChild(logo);
+    }
+    cap.appendChild(who);
+    return cap;
+  }
+
+  function paragraphs(text, into) {
+    String(text).split(/\n\s*\n/).forEach(function (para) {
+      if (!para.trim()) return;
+      var p = document.createElement("p"); p.textContent = para.trim(); into.appendChild(p);
+    });
+  }
+
+  function renderArchive(items) {
+    mount.innerHTML = "";
+    var lead = items[0] && items[0].featured ? items[0] : null;
+    var rest = lead ? items.slice(1) : items;
+    if (lead) {
+      var letter = document.createElement("figure");
+      letter.className = "t-letter";
+      var mark = document.createElement("span");
+      mark.className = "t-card__mark"; mark.setAttribute("aria-hidden", "true"); mark.textContent = "\u201C";
+      var bq = document.createElement("blockquote"); bq.className = "t-letter__text";
+      paragraphs(lead.quote, bq);
+      letter.appendChild(mark); letter.appendChild(bq); letter.appendChild(byline(lead, "t-card__by t-letter__by"));
+      mount.appendChild(letter);
+    }
+    if (rest.length) {
+      var list = document.createElement("div");
+      list.className = "t-columns"; list.setAttribute("role", "list");
+      rest.forEach(function (t) {
+        var fig = document.createElement("figure");
+        fig.className = "t-card"; fig.setAttribute("role", "listitem");
+        var mark = document.createElement("span");
+        mark.className = "t-card__mark"; mark.setAttribute("aria-hidden", "true"); mark.textContent = "\u201C";
+        var bq = document.createElement("blockquote");
+        bq.className = "t-card__quote" + (t.quote.length > 340 ? " is-long" : t.quote.length > 180 ? " is-mid" : "");
+        paragraphs(t.quote, bq);
+        fig.appendChild(mark); fig.appendChild(bq); fig.appendChild(byline(t));
+        list.appendChild(fig);
+      });
+      mount.appendChild(list);
+    }
+    var count = document.getElementById("t-archive-count");
+    if (count) count.textContent = items.length === 1 ? "1 testimonial" : items.length + " testimonials";
+  }
 
   function render(items) {
     mount.innerHTML = "";
@@ -258,7 +321,7 @@
       mark.className = "t-card__mark"; mark.setAttribute("aria-hidden", "true"); mark.textContent = "\u201C";
       var bq = document.createElement("blockquote");
       bq.className = "t-card__quote" + (t.quote.length > 340 ? " is-long" : t.quote.length > 180 ? " is-mid" : "");
-      var q = document.createElement("p"); q.textContent = t.quote; bq.appendChild(q);
+      paragraphs(t.quote, bq);
       var cap = document.createElement("figcaption");
       cap.className = "t-card__by";
       if (t.photo) {
@@ -282,5 +345,11 @@
     mount.appendChild(list);
     var layout = mount.closest(".t-layout");
     if (layout) layout.classList.add(items.length === 1 ? "t-layout--one" : "t-layout--many");
+    var head = layout && layout.querySelector(".t-head");
+    if (head && !head.querySelector(".t-all")) {
+      var more = document.createElement("p"); more.className = "t-all";
+      var a = document.createElement("a"); a.className = "text-link"; a.href = "testimonials.html"; a.textContent = "Read every testimonial";
+      more.appendChild(a); head.appendChild(more);
+    }
   }
 })();

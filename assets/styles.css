@@ -725,3 +725,20 @@ input[type="file"]::file-selector-button:hover { background: var(--ink); color: 
 .by-sc { display: inline-flex; align-items: center; gap: 7px; margin: 0; }
 .by-sc img { height: 13px; width: auto; opacity: .6; }
 @media (max-width: 600px) { .footer-legal { flex-direction: column; align-items: flex-start; gap: 0.4rem; padding-bottom: 4.5rem; } }
+
+/* Testimonials page */
+.t-all { margin: 0; }
+.t-letter { margin: 0 auto var(--space-6); max-width: 44rem; display: flex; flex-direction: column; gap: 1.25rem; padding: clamp(1.5rem, 4vw, 3rem); background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); }
+.t-letter__text { margin: 0; font-family: var(--font-display); font-size: var(--step-2); line-height: 1.4; color: var(--ink); display: flex; flex-direction: column; gap: 1em; }
+.t-letter__text p { margin: 0; }
+.t-letter__by { padding-top: 1.25rem; border-top: 1px solid var(--line); }
+.t-columns { columns: 2 22rem; column-gap: clamp(2rem, 4vw, 4rem); }
+.t-columns .t-card { break-inside: avoid; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.t-card__quote p + p { margin-top: 0.8em; }
+.t-archive-empty:not(:only-child) { display: none; }
+@media (max-width: 600px) { .t-letter__text { font-size: 1.2rem; line-height: 1.5; } }
+.page-hero--center .inner { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+.page-hero--center .copy { align-items: center; max-width: 44rem; }
+.page-hero--center .eyebrow { justify-content: center; }
+.t-columns .t-card__quote, .t-columns .t-card__quote.is-mid, .t-columns .t-card__quote.is-long { font-size: 1.3rem; line-height: 1.45; }
+@media (max-width: 600px) { .t-columns .t-card__quote, .t-columns .t-card__quote.is-mid, .t-columns .t-card__quote.is-long { font-size: 1.15rem; line-height: 1.5; } }
