@@ -143,6 +143,7 @@
   if (filterRoot) {
     var chips = Array.prototype.slice.call(filterRoot.querySelectorAll(".chip"));
     var items = Array.prototype.slice.call(document.querySelectorAll("[data-tags]"));
+    var stories = Array.prototype.slice.call(document.querySelectorAll(".pcards [data-tags]"));
     var count = document.getElementById("result-count");
     function applyFilter(value) {
       var shown = 0;
@@ -152,7 +153,10 @@
         if (match) shown++;
       });
       chips.forEach(function (c) { c.setAttribute("aria-pressed", String(c.getAttribute("data-filter") === value)); });
-      if (count) count.textContent = "Showing " + shown + " of " + items.length + " projects";
+      if (count) {
+        var featured = stories.filter(function (st) { return !st.hidden; }).length;
+        count.textContent = value === "all" ? featured + " featured stories" : featured + " of " + stories.length + " featured stories";
+      }
     }
     chips.forEach(function (chip) {
       chip.addEventListener("click", function () { applyFilter(chip.getAttribute("data-filter")); });
